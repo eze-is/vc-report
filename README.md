@@ -85,4 +85,4 @@ vc-report/
 
 ## License
 
-[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — 可自由使用和修改，禁止商用。
+[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html) — 可自由使用和修改，但修改后的版本必须同样开源，商用需遵循 AGPL 条款。
