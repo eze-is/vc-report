@@ -85,4 +85,4 @@ vc-report/
 
 ## License
 
-[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html) — 可自由使用和修改，但修改后的版本必须同样开源，商用需遵循 AGPL 条款。
+[BSL 1.1](https://mariadb.com/bsl11/) — 个人和非商业用途自由使用，商业用途需购买授权。2030-04-10 后自动转为 Apache 2.0。
