@@ -4,29 +4,24 @@
 
 ## 输入
 
-- `reports/WNN/research/` 目录下的所有 .md 文件（调研详情）
+- `projects/{项目}/research/` 目录下的所有 .md 文件（调研详情）
 - `profile.yaml`（报告结构、风格、调研偏好）
 - `worldview.md`（认知框架，用于交叉判断）
-- `notes.md`（调研脉络和判断，如有）
 
 ## 生成规则
 
 ### 内容组织
 
 1. **按 profile.structure 排列板块**，保持用户习惯的顺序
-2. **自动归类**：
-   - 来源为 note 且涉及面对面交流 → Meeting
-   - 来源为 link/search → Desktop research
-   - 归类不确定时，按内容性质判断而非死板规则
+2. **自动归类**：根据素材来源和内容性质，归入 profile.structure 中对应的板块。归类不确定时按内容性质判断，而非死板规则
 3. **同话题合并**：同一公司/产品的多条素材合并为一个条目
 4. **相关话题可聚合呈现**：如果多个话题属于同一趋势，可以在一个小标题下一起写，再分别展开
-5. **参考链接汇总**：从所有 research 文件中提取参考链接，去重后汇总到 Intriguing references
-6. **Next on 建议**：从 notes.md 的待办事项 + research 文件中识别的未完成线索生成
+5. **链接汇总**：从所有 research 文件中提取参考链接，去重后汇总到 profile 中对应的链接板块（如有）
+6. **后续建议**：从 notes.md 的待办事项 + research 文件中识别的未完成线索，归入 profile 中对应的计划/待办板块（如有）
 
 ### 压缩策略
 
-- **Meeting 条目**：保留 profile 定义的 subsections 结构，每个 subsection 压缩到 2-4 个核心要点
-- **Desktop research 条目**：使用 research 文件中的 AI 摘要为基础，补充关键数据
+- **各板块条目**：按 profile 定义的 detail_level 控制信息量，优先使用 research 文件中的 AI 摘要为基础
 - **保留个人判断**：用户或 notes.md / worldview.md 中的主观判断必须保留（这是报告的独特价值）
 - **保留关键数据**：精确的数字指标（DAU、ARR、留存率等）不能在压缩中丢失
 - **遵循 research_preferences**：按 profile.yaml 的 `research_preferences` 控制呈现角度。数据是佐证，不是主体；关注战略含义而非技术细节
@@ -50,7 +45,7 @@ CLI 工具比 MCP 便宜 10-32x[^1]，XX 公司 DAU 涨到了 160w[^2]
 - 按 profile.report_style.tone 中的风格要求输出
 - 参考 profile.report_style.sample_snippets 中的表达方式
 - 保持用户习惯的中英文混用模式
-- **Desktop research 每条控制在 2-5 行要点**，不写长段分析。个人判断用括号自然穿插
+- 每条控制在 profile 定义的信息粒度内，不写长段分析。个人判断用括号自然穿插
 
 ## 输出格式
 
@@ -58,7 +53,7 @@ CLI 工具比 MCP 便宜 10-32x[^1]，XX 公司 DAU 涨到了 160w[^2]
 
 ## URL 校验
 
-生成完成后，对所有脚注和 Intriguing references 中的 URL 做一次有效性检查：
+生成完成后，对所有脚注和链接汇总板块中的 URL 做一次有效性检查：
 - 遵循 web-access skill，WebFetch 检查可访问性
 - 无法访问 → 标注 `[链接失效]` 或替换
 - 微信公众号链接（mp.weixin.qq.com）跳过校验（通常有效但不可被 WebFetch 抓取）

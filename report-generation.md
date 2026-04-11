@@ -1,70 +1,45 @@
 # 报告生成
 
-从子项目的 `research/` 目录汇总生成周报或月报。
+从项目的 `research/` 目录汇总生成报告。
 
 ## 触发
 
-- "生成本周调研" / "出周报" / "本周汇总"
-- "生成月报" / "本月汇总"
+- "出报告" / "汇总一下" / "生成输出"
+- 用户在某个项目上下文中要求产出
 
-## 周报流程
+## 报告生成流程
 
-1. **确定周期**：当前 ISO 周（如 2026-W15），或用户指定的周
-2. **读取素材**：遍历 `reports/2026-W15/research/` 所有 .md 文件
+1. **确定项目**：用户指定的项目（如 `projects/2026-03-录音整理/`），或当前正在操作的项目
+2. **读取素材**：遍历 `projects/{项目}/research/` 所有 .md 文件
 3. **读取 profile**：加载 profile.yaml 的报告结构模板和风格
 4. **按模板组织**：
    - 按 profile.structure 的板块顺序排列
-   - 每条素材根据来源类型自动归类（笔记类多归 Meeting，链接/搜索类多归 Desktop research）
+   - 每条素材根据内容和来源归入对应板块（板块定义来自 profile，不做预设）
    - 同一项目/公司的多条素材合并
-   - 从各文件的"参考链接"段提取所有 URL，汇总到 Intriguing references
-   - 从各文件中识别未完成的调研线索，生成 Next on 建议
-5. **压缩内容**：
+5. **过滤自家机构信息**：检查 profile.yaml 的 `firm` 字段，确保 output 中不出现该机构的内部策略、合伙人判断、与项目方的互动细节等。即使 research 文件中已做过滤，output 阶段仍需再检查一遍
+6. **压缩内容**：
    - 优先使用各 research 文件中的 "AI 摘要" 段
    - 按 profile 的 detail_level 控制信息量
    - 保留关键数据指标
-   - 保留用户的个人判断（notes.md 中的 consensus 和 user 标注）
-6. **输出**：写入 `reports/2026-W15/output.md`
-7. **展示给用户**：用户可修改，触发风格学习
+7. **输出**：写入 `projects/{项目}/output.md`
+8. **展示给用户**：用户可修改，触发风格学习
 
-## 月报流程
+## 跨项目聚合
 
-1. 创建月报子项目：`reports/2026-04-monthly/`
-2. 聚合当月所有周报子项目的 research 文件（`reports/2026-W14/research/` + `reports/2026-W15/research/` + ...）
-3. 按 profile 模板组织，但侧重：
+月报等需要聚合多个项目 research 的场景：
+
+1. 创建月报项目：`projects/2026-04-月报/`
+2. 聚合相关项目的 research 文件（按日期筛选或用户指定）
+3. 按 profile 模板组织，侧重：
    - 趋势总结而非逐条罗列
-   - 跨周对比（如某公司本月的数据变化）
+   - 跨项目对比
    - 重点项目的进展汇总
-4. 月报如有专属调研 → 写入 `reports/2026-04-monthly/research/`
-5. 输出到 `reports/2026-04-monthly/output.md`
+4. 月报如有专属调研 → 写入 `projects/2026-04-月报/research/`
+5. 输出到 `projects/2026-04-月报/output.md`
 
 ## 报告格式
 
-按 profile.yaml 的 structure 字段动态生成。以下是一个示例（基于 VC 投资人的典型格式）：
-
-```markdown
-# Wrap up — 2026-W15
-
-## Meeting
-### {项目名}：{一句话定位}
-- {子板块1}
-  - 要点...
-- {子板块2}
-  - 要点...
-
-## Desktop research
-- {话题1}
-  - 关键发现...
-- {话题2}
-  - 关键发现...
-
-## Next on
-- {下周计划1}
-- {下周计划2}
-
-## Intriguing references
-- {标题} {URL}
-- {标题} {URL}
-```
+按 profile.yaml 的 structure 字段动态生成。板块名称、顺序、层级关系、每个板块的信息粒度全部来自 profile，不做预设。
 
 ## 脚注引用
 
@@ -78,21 +53,21 @@ XX 公司 DAU 涨到了 160w[^1]，CLI 工具比 MCP 便宜 10-32x[^2]
 [^2]: https://example.com/benchmark — benchmark 文章
 ```
 
-Intriguing references 板块的链接不需要脚注（它本身就是链接列表）。
+如果 profile 中有专门汇总链接的板块，该板块本身不需要脚注（它就是链接列表）。
 
 ## URL 有效性校验
 
-生成周报后、展示给用户前，对所有引用的 URL（脚注 + Intriguing references）做一次快速检查：
+生成报告后、展示给用户前，对所有引用的 URL（脚注 + 链接汇总板块）做一次快速检查：
 1. 遵循 web-access skill，逐个 WebFetch 检查是否可访问
 2. 无法访问的 URL 标注 `[链接失效]` 或替换为可用的替代来源
 3. 微信公众号链接（mp.weixin.qq.com）通常有效但不可被 WebFetch 抓取，可跳过校验
 
 ## 用户修改与反馈
 
-用户看到生成的周报后可能会：
-- "这个项目的部分太简略了，把运营数据加回来" → 从 research 文件中补充
-- "Desktop research 里这条不重要，删掉" → 删除并记录偏好
-- "融资信息应该放在更前面" → 更新 profile.yaml 的 subsections 顺序
+用户看到生成的报告后可能会：
+- "这部分太简略了，补充一下" → 从 research 文件中补充
+- "这条不重要，删掉" → 删除并记录偏好
+- "这个板块的顺序调一下" → 更新 profile.yaml 的 structure
 - "这个表述不对" → 直接修正
 
 每次修改都是风格学习的输入（见 profile-learning.md）。

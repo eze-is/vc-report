@@ -8,46 +8,50 @@ metadata:
   version: "1.0.0"
 ---
 
-# VC Report — 调研周报助手
+# VC Report — 调研报告助手
 
-把零散的调研素材（链接、关键词、笔记）变成结构化的周报/月报调研段落。Profile-driven，先学用户风格，再按其习惯输出。
+把零散的调研素材（链接、关键词、笔记、录音）变成结构化的调研报告。Profile-driven，先学用户风格，再按其习惯输出。
 
 ## 工作区结构
 
-根目录放可复用资产，每期报告是一个独立子项目。
+全局资产放根目录（跨项目共享），每个项目是一次独立的整理/调研任务。
 
 ```
 <workspace>/
-├── profile.yaml              # 可复用：用户画像 + 报告风格 + 模板结构
-├── worldview.md              # 可复用：持续演化的认知框架（赛道判断、趋势 thesis）
-├── samples/                  # 可复用：历史周报样本（风格学习用）
-├── notes.md                  # 可复用：跨期的调研脉络（事实层：谁、什么、进度）
-├── inbox/                    # 可复用：素材投递入口
-│   ├── inbox.md              # 粘贴链接/关键词（最低门槛入口）
-│   └── (也可直接放 .md 文件)
-└── reports/                  # 子项目集合
-    ├── 2026-W15/             # 一期周报 = 一个子项目
-    │   ├── research/         # 本期调研详情（用户可审阅的中间态）
-    │   │   ├── traini.md
-    │   │   └── chai-data.md
-    │   └── output.md         # 本期最终产出
-    ├── 2026-W16/
+├── profile.yaml              # 全局：用户画像 + 报告风格 + 模板结构
+├── worldview.md              # 全局：持续演化的认知框架（赛道判断、趋势 thesis）
+├── samples/                  # 全局：历史报告样本（风格学习用）
+│
+└── projects/                 # 项目集合
+    ├── 2026-03-录音整理/       # 一个项目 = 一次整理任务
+    │   ├── inbox/            # 项目素材入口（录音、链接、笔记）
+    │   ├── transcripts/      # 录音转录原文（持久化，追问时回溯）
+    │   ├── research/         # 调研详情（用户可审阅的中间态）
+    │   └── output.md         # 最终产出
+    │
+    ├── 2026-W15-周报/
+    │   ├── inbox/
     │   ├── research/
     │   └── output.md
-    └── 2026-04-monthly/      # 月报也是子项目，可引用当月各周的 research
-        ├── research/         # 月报专属调研（如有）
+    │
+    └── 2026-04-月报/           # 可引用其他项目的 research
+        ├── inbox/
+        ├── research/
         └── output.md
 ```
 
 ## 数据流
 
 ```
-素材输入（对话/inbox）
-  → reports/WNN/research/topic.md（调研详情，用户可审阅）
-    → reports/WNN/output.md（周报压缩版）
+素材投入项目 inbox
+  → projects/{项目}/transcripts/（录音转录原文，持久化）
+  → projects/{项目}/research/topic.md（调研详情，用户可审阅）
+    → projects/{项目}/output.md（报告压缩版）
 ```
 
-用户审阅路径：周报觉得某话题压缩太狠 → 打开 research/ 详情 → 告诉 AI 补充。
+用户审阅路径：
+- 报告觉得某话题压缩太狠 → 打开 research/ 详情 → 告诉 AI 补充
+- research 稿需要增删内容 → AI 回溯 transcripts/ 中的转录原文重新提炼
 
 ## 三个核心动作
 
@@ -65,10 +69,11 @@ metadata:
 - 甩链接："帮我看下这个 https://..."
 - 说关键词："帮我查一下 XX 公司最近的数据"
 - 发笔记："今天跟 XX 创始人聊了..."
+- 丢录音："帮我处理这些录音" + 文件路径
 
 **inbox 批量给**（补充路径）：
 - `inbox.md` 里粘贴多个链接/关键词
-- 直接往 inbox/ 放 .md 文件
+- 直接往 inbox/ 放 .md 文件或音频文件
 - 告诉 AI "处理一下 inbox"
 
 **关键：调研不是信息搬运。** 收到素材后不要浅尝辄止，要主动发散探索。
@@ -84,7 +89,7 @@ python3 ~/.claude/skills/vc-report/scripts/build-prompt.py \
   --stage 1 \
   --topic "话题名" \
   --initial-info "用户提供的初始信息" \
-  --output-path "reports/WNN/research/topic.md" \
+  --output-path "projects/{项目}/research/topic.md" \
   --workspace "<workspace路径>" \
   --depth medium  # shallow/medium/deep
 
@@ -100,7 +105,7 @@ python3 ~/.claude/skills/vc-report/scripts/build-prompt.py \
 
 ### 3. 出报告
 
-周末汇总。读取 `reports/WNN/research/` 所有文件，按 profile 模板压缩成周报。
+汇总产出。读取 `projects/{项目}/research/` 所有文件，按 profile 模板压缩成报告。
 
 → 详见 [report-generation.md](report-generation.md)
 
@@ -122,9 +127,11 @@ python3 ~/.claude/skills/vc-report/scripts/build-prompt.py \
 | 处理素材 | [material-processing.md](material-processing.md) |
 | 生成报告 | [report-generation.md](report-generation.md) |
 | 联网操作 | web-access skill |
+| 录音处理 | audio-transcribe skill |
 
 ## 依赖
 
 - **web-access skill**：所有联网操作遵循 web-access skill
+- **audio-transcribe skill**：所有录音转录操作遵循 audio-transcribe skill
 - **Python 3 + PyYAML**：运行 scripts/build-prompt.py
 - 子 Agent prompt **必须由 build-prompt.py 生成**，不要手动拼接

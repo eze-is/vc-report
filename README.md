@@ -41,14 +41,13 @@ npx skills add eze-is/vc-report
 <workspace>/
 ├── profile.yaml          # 用户画像 + 报告风格 + 调研偏好
 ├── worldview.md          # 持续演化的认知框架
-├── samples/              # 历史周报样本（风格学习用）
-├── notes.md              # 调研脉络（事实层）
-├── inbox/                # 素材投递入口
-│   └── inbox.md          # 粘贴链接/关键词
-└── reports/
-    └── 2026-W15/         # 每期报告 = 一个子项目
+├── samples/              # 历史报告样本（风格学习用）
+└── projects/             # 每个项目 = 一次独立的调研/整理任务
+    └── {项目名}/
+        ├── inbox/        # 素材投递入口
+        ├── transcripts/  # 录音转录原文（持久化）
         ├── research/     # 调研详情（子 Agent 写入）
-        └── output.md     # 最终周报
+        └── output.md     # 最终报告
 ```
 
 ## 两阶段调研设计

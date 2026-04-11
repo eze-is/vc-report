@@ -4,6 +4,12 @@
 
 ## 核心原则
 
+**报告服务于内部受众，不泄露自家信息。**
+
+调研和报告是给基金内部看的。`profile.yaml` 的 `firm` 字段标识了用户所在机构——该机构的内部信息（投资策略、合伙人判断、与项目方的互动细节、业务方向、PR 偏好等）不应出现在 research 文件和 output 中。报告只聚焦外部信息：项目本身、市场、数据、外部机构的公开或可引述的动态。
+
+这条规则贯穿全流程：子 Agent 生成 research 时过滤，主 Agent 生成 output 时再过滤一遍。
+
 **像人一样思考，不像爬虫一样抓取。**
 
 一个好的 VC 调研员拿到一个话题后，不会只看用户给的那篇文章就停了。他会：
@@ -111,7 +117,7 @@ AI 调研应该走完这个完整的思考链，而不是停在第 1 步。
 子 Agent：阶段 1（客观探索）→ 写 research 文件
   ├─ 第一层：理解
   ├─ 第二层：发散（主动搜索、深挖）
-  ├─ 直接写入 reports/WNN/research/topic.md
+  ├─ 直接写入 projects/{项目}/research/topic.md
   ├─ 文件内容是详细的调研事实，保留所有关键细节和数据
   ├─ 不带 worldview——避免确认偏误
   └─ 不带 research_preferences——避免角度筛选偏误
@@ -190,7 +196,7 @@ python3 ~/.claude/skills/vc-report/scripts/build-prompt.py \
   --stage 1 \
   --topic "话题名" \
   --initial-info "用户给的链接/关键词/笔记" \
-  --output-path "reports/WNN/research/topic.md" \
+  --output-path "projects/{项目}/research/topic.md" \
   --workspace "<工作区路径>" \
   --depth medium
 ```
