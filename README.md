@@ -15,6 +15,7 @@ npx skills add eze-is/vc-report
 ## 依赖
 
 - [web-access](https://github.com/eze-is/web-access) — 联网调研能力（需先安装）
+- [audio-transcribe](https://github.com/eze-is/eze-skills/tree/main/audio-transcribe) — 录音转录能力（处理录音素材时需要）
 - Python 3 + PyYAML — 运行 `scripts/build-prompt.py`
 
 ## 核心特性
